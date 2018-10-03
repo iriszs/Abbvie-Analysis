@@ -1,3 +1,6 @@
+# This script is imported in other scripts 
+# It contains two functions to prevent unnecessary installation of packages 
+
 ########################################################
 #                     Packages                         #
 ########################################################
