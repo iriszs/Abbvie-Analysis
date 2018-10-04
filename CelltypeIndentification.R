@@ -8,7 +8,7 @@ rm(list=ls(all=TRUE))
 ########################################################
 
 # Load script that contains the used functions in this script
-source("/media/imgorter/BD_1T/Iris/Scripts/abbvie/packageTest.R")
+source("/media/imgorter/BD_1T/Iris/Scripts/abbvie/workflow/packageTest.R")
 
 ########################################################
 #                     Options                          #
@@ -55,7 +55,8 @@ colnames(molecules) <- cellbarcodes[,1]
 sceset <- SingleCellExperiment(assays = list(counts = as.matrix(molecules)), colData = anno)
 
 # Location of the gene matrix file
-gmtFile <- "/media/imgorter/BD_1T/Iris/microglia_signatures.gmt"
+#gmtFile <- "/media/imgorter/BD_1T/Iris/microglia_signatures.gmt"
+gmtFile <- paste(file.path(system.file('examples', package='AUCell')), "geneSignatures.gmt", sep="/")
 # Load the gene matrix
 geneSets <- getGmt(gmtFile)
 
@@ -74,6 +75,7 @@ cells_assignment <- AUCell_exploreThresholds(cells_AUC, plotHist=FALSE, assign=T
 
 # Explore thresholds  
 cells_assignment$Microglia_lavin$aucThr$thresholds
+
 
 # Select cells based on the chosen threshold. These are microlgia
 selectedCells <- names(which(getAUC(cells_AUC)["Microglia_lavin",]>0.02824006))

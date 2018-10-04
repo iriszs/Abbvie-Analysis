@@ -39,10 +39,10 @@ sceset <- readRDS("/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE.rds")
 sceset <- calculateQCMetrics(sceset)
 
 # Create histogram of the RNA molecules distribution across cells
-hist(sceset$total_counts, breaks = 100, main = "Total number of RNA molecules per cell", xlab = "Amount of RNA molecules")
+hist(sceset$total_counts, breaks = 100, main = "Total number of RNA molecules per cell", xlab = "Number of RNA molecules")
 
 # Create histogram of the unique genes distribution across cells
-hist(sceset$total_features, breaks = 100, main = "Total number of unique genes detected per cell", xlab = "Amount of genes")
+hist(sceset$total_features, breaks = 100, main = "Total number of unique genes detected per cell", xlab = "Number of genes")
 
 # Filters based on RNA molecules and unique genes
 # are 'off' for now, but not removed to make it easy to change it fast
