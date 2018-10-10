@@ -55,8 +55,8 @@ colnames(molecules) <- cellbarcodes[,1]
 sceset <- SingleCellExperiment(assays = list(counts = as.matrix(molecules)), colData = anno)
 
 # Location of the gene matrix file
-#gmtFile <- "/media/imgorter/BD_1T/Iris/microglia_signatures.gmt"
-gmtFile <- paste(file.path(system.file('examples', package='AUCell')), "geneSignatures.gmt", sep="/")
+gmtFile <- "/media/imgorter/BD_1T/Iris/microglia_signatures.gmt"
+#gmtFile <- paste(file.path(system.file('examples', package='AUCell')), "geneSignatures.gmt", sep="/")
 # Load the gene matrix
 geneSets <- getGmt(gmtFile)
 

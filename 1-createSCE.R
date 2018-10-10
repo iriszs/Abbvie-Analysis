@@ -8,7 +8,7 @@ rm(list=ls(all=TRUE))
 ########################################################
 
 # Load script that contains the used functions in this script
-source("/media/imgorter/BD_1T/Iris/Scripts/abbvie/packageTest.R")
+source("/media/imgorter/BD_1T/Iris/Scripts/abbvie/workflow/packageTest.R")
 
 ########################################################
 #                     Options                          #
@@ -53,5 +53,3 @@ sceset <- SingleCellExperiment(assays = list(counts = as.matrix(molecules)), col
 
 # Save object to import in another script
 saveRDS(sceset, file = "/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE.rds")
-
-

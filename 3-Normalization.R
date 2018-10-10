@@ -8,7 +8,7 @@ rm(list=ls(all=TRUE))
 ########################################################
 
 # Load script that contains the used functions in this script
-source("/media/imgorter/BD_1T/Iris/Scripts/abbvie/packageTest.R")
+source("/media/imgorter/BD_1T/Iris/Scripts/abbvie/workflow/packageTest.R")
 
 ########################################################
 #                     Options                          #
@@ -32,8 +32,8 @@ bioPkgTest("scater")
 #                    Normalization                     #
 ########################################################
 
-# Load sceset with the quality control assays
-sceset <- readRDS("/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE_QC.rds")
+# Load sceset without the quality control assays since they are not neccesary for further analysis
+sceset <- readRDS("/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE.rds")
 
 # Lognormalize the raw counts and add as assay to the sceset
 assay(sceset, "logcounts") <- log2(counts(sceset) + 1)
@@ -41,10 +41,13 @@ assay(sceset, "logcounts") <- log2(counts(sceset) + 1)
 # Calculate counts per million (CPM) and add as assay to the sceset
 assay(sceset, "CPM") <- log2(calculateCPM(sceset) + 1)
 
-# Plot a PCA to give an indication of the data
-plotPCA(sceset, colour_by = "Mouse")
-plotPCA(sceset, colour_by = "Condition")
+# Explore which normalization is best using a PCA plot
+plotPCA(sceset, exprs_values = "CPM", colour_by = "Type")
+
+plotPCA(sceset, exprs_values = "logcounts", colour_by = "Type")
+
+# Remove logcounts assay since CPM is best in this case
+assay(sceset, "logcounts") <- NULL
 
 # Save sce object for further analysis in another script
 saveRDS(sceset, "/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE_Normalized.rds")
-
