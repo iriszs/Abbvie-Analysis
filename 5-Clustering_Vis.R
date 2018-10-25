@@ -39,7 +39,7 @@ seuset <- readRDS("/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/seuset_clustere
 TSNEPlot(object = seuset)
 
 # Open PDF
-pdf("/media/imgorter/BD_1T/Iris/Results/Genes_tsne/genes.pdf")
+pdf("/media/imgorter/BD_1T/Iris/Results/tsne/with_variable_genes/genes.pdf")
 
 # Plot genes that express in cells but not in nuclei
 FeaturePlot(object = seuset, features.plot = c("Tmsb4x", "Irak2", "Rplp2", "Bag3"), cols.use = c("grey", "red"), reduction.use = "tsne", no.legend = FALSE)

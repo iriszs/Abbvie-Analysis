@@ -99,7 +99,7 @@ df <- cbind(AD.nuclei_mean, AD.cells_mean, WT.nuclei_mean, WT.cells_mean)
 sapply(df, class)
 
 # Plot the nuclei vs cells in AD
-ggplot(df, aes(x = df$AD.nuclei, y = df$AD.cells)) + geom_point() + ggtitle("Log-mean expression of nuclei and cells in AD") + ylab("AD cells") + xlab("AD nuclei")
+ggplot(df, aes(x = df$AD.nuclei, y = df$AD.cells)) + geom_point(color = "blue", shape = 1) + geom_smooth(method = "lm", color = "red") + ggtitle("Log-mean expression of nuclei and cells in AD") + ylab("AD cells") + xlab("AD nuclei")
 
 # Plot the nuclei vs cells in WT
-ggplot(df, aes(x = df$WT.nuclei, y = df$WT.cells)) + geom_point() + ggtitle("Log-mean expression of nuclei and cells in WT") + ylab("WT cells") + xlab("WT nuclei")
+ggplot(df, aes(x = df$WT.nuclei, y = df$WT.cells)) + geom_point(color = "blue", shape = 1) + geom_smooth(method = "lm", color = "red") + ggtitle("Log-mean expression of nuclei and cells in WT") + ylab("WT cells") + xlab("WT nuclei")
