@@ -27,14 +27,13 @@ set.seed(1234567)
 
 bioPkgTest("SingleCellExperiment")
 bioPkgTest("edgeR")
-bioPkgTest("scater")
 
 ########################################################
 #                    Normalization                     #
 ########################################################
 
 # Load sceset without the quality control assays since they are not neccesary for further analysis
-sceset <- readRDS("/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE.rds")
+sceset <- readRDS("/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE_ensembl.rds")
 
 x_rpkm <- rpkm(assay(sceset, "counts"), 28692)
 rpkmsum <- sum(x_rpkm, na.rm=F)
@@ -46,4 +45,4 @@ assay(sceset, "RPKM") <- tpm.values
 plotPCA(sceset, exprs_values = "RPKM", colour_by = "Type")
 
 # Save sce object for further analysis in another script
-saveRDS(sceset, "/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE_Normalized.rds")
+saveRDS(sceset, "/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE_ensembl_Normalized.rds")
