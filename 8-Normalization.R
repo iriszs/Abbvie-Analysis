@@ -47,6 +47,3 @@ plotPCA(sceset, exprs_values = "RPKM", colour_by = "Type")
 
 # Save sce object for further analysis in another script
 saveRDS(sceset, "/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE_Normalized.rds")
-
-
-sceset <- readRDS
