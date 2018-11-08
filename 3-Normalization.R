@@ -26,6 +26,7 @@ set.seed(1234567)
 # With the use of the pkgTest and bioPkgTest functions from the packageTest.r file
 
 bioPkgTest("SingleCellExperiment")
+bioPkgTest("edgeR")
 bioPkgTest("scater")
 
 ########################################################
@@ -35,27 +36,15 @@ bioPkgTest("scater")
 # Load sceset without the quality control assays since they are not neccesary for further analysis
 sceset <- readRDS("/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE.rds")
 
-# Lognormalize the raw counts and add as assay to the sceset
-assay(sceset, "logcounts") <- log2(counts(sceset) + 1)
 
-# Calculate counts per million (CPM) and add as assay to the sceset
-assay(sceset, "CPM") <- log2(calculateCPM(sceset) + 1)
-
-# Explore which normalization is best using a PCA plot
-plotPCA(sceset, exprs_values = "CPM", colour_by = "Type")
-
-plotPCA(sceset, exprs_values = "logcounts", colour_by = "Type")
-
-x_rpkm <- rpkm(dataset, lengthofgenes)
-rpkmsum <- sum(xrpkm, na.rm=T)
+x_rpkm <- rpkm(assay(sceset, "counts"), 28692)
+rpkmsum <- sum(x_rpkm, na.rm=F)
 tpm.values <- x_rpkm/rpkmsum * 10^6
-tpm.values <- tmp.values[,order(colnames(tpm.values))]
+#tpm.values <- tpm.values[,order(colnames(tpm.values))]
 
+assay(sceset, "RPKM") <- tpm.values
 
-
-
-# Remove logcounts assay since CPM is best in this case
-assay(sceset, "logcounts") <- NULL
+plotPCA(sceset, exprs_values = "RPKM", colour_by = "Type")
 
 # Save sce object for further analysis in another script
 saveRDS(sceset, "/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE_Normalized.rds")
