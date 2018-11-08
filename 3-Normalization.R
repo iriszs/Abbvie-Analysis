@@ -46,6 +46,14 @@ plotPCA(sceset, exprs_values = "CPM", colour_by = "Type")
 
 plotPCA(sceset, exprs_values = "logcounts", colour_by = "Type")
 
+x_rpkm <- rpkm(dataset, lengthofgenes)
+rpkmsum <- sum(xrpkm, na.rm=T)
+tpm.values <- x_rpkm/rpkmsum * 10^6
+tpm.values <- tmp.values[,order(colnames(tpm.values))]
+
+
+
+
 # Remove logcounts assay since CPM is best in this case
 assay(sceset, "logcounts") <- NULL
 
