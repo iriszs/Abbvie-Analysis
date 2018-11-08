@@ -35,24 +35,7 @@ bioPkgTest("doRNG")
 #              Celltype Identification                 #
 ########################################################
 
-# Location of data
-location <- "/media/imgorter/BD_1T/Iris/Data_abbvie/AD_WT/outs/filtered_gene_bc_matrices_mex/mm10"
-
-# Load the data  
-cellbarcodes <- read.table(paste0(location, "/barcodes.tsv"))
-genenames <- read.table(paste0(location, "/genes.tsv"))
-molecules <- Matrix::readMM(paste0(location, "/matrix.mtx"))
-
-# Load reference/annotation file
-anno <- read.csv("/media/imgorter/BD_1T/Iris/Data_abbvie/reference_AD_WT.csv")
-
-# Set the rownames of the molecules matrix as the second column of the genenames matrix (which are the gene symbols)
-rownames(molecules) <- make.names(genenames[,2], unique = TRUE)
-# Set colnames of molecules as the first column of the cellbarcodes matrix (which are the cellbarcodes)
-colnames(molecules) <- cellbarcodes[,1]
-
-# Create sceset object using the molecules matrix and the annotation info
-sceset <- SingleCellExperiment(assays = list(counts = as.matrix(molecules)), colData = anno)
+sceset <- readRDS("/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE.rds")
 
 # Location of the gene matrix file
 gmtFile <- "/media/imgorter/BD_1T/Iris/microglia_signatures.gmt"

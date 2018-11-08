@@ -36,7 +36,6 @@ bioPkgTest("scater")
 # Load sceset without the quality control assays since they are not neccesary for further analysis
 sceset <- readRDS("/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE.rds")
 
-
 x_rpkm <- rpkm(assay(sceset, "counts"), 28692)
 rpkmsum <- sum(x_rpkm, na.rm=F)
 tpm.values <- x_rpkm/rpkmsum * 10^6
@@ -48,3 +47,6 @@ plotPCA(sceset, exprs_values = "RPKM", colour_by = "Type")
 
 # Save sce object for further analysis in another script
 saveRDS(sceset, "/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE_Normalized.rds")
+
+
+sceset <- readRDS
