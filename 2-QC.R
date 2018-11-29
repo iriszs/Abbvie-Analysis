@@ -45,7 +45,7 @@ sceset <- calculateQCMetrics(sceset, feature_controls = list(MT = isSpike(sceset
 sceset <- calculateQCMetrics(sceset)
 
 # Create histogram of the RNA molecules distribution across cells
-hist(sceset$total_counts, breaks = 100, main = "Amount of RNA molecules per cell", xlab = "Amount of RNA molecules")
+hist(sceset$total_counts, breaks = 100, main = "Library Size", xlab = "Counts")
 
 # Create histogram of the unique genes distribution across cells
 hist(sceset$total_features_by_counts , breaks = 100, main = "Amount of unique genes detected per cell", xlab = "Amount of genes")

@@ -68,7 +68,7 @@ colnames(AD.nuclei_mean) <- "AD.nuclei"
 # Calculate the mean of the expression of each gene 
 AD.cells_mean <- rowMeans(assay(AD.cells))
 # Convert the set to a dataframe
-AD.cells_mean <- as.data.frame(AD.nuclei_mean)
+AD.cells_mean <- as.data.frame(AD.cells_mean)
 # Log-normalize the mean
 AD.cells_mean <- log2(AD.cells_mean + 1)
 # Set the columnames of the dataframe
@@ -99,7 +99,16 @@ df <- cbind(AD.nuclei_mean, AD.cells_mean, WT.nuclei_mean, WT.cells_mean)
 sapply(df, class)
 
 # Plot the nuclei vs cells in AD
-ggplot(df, aes(x = df$AD.nuclei, y = df$AD.cells)) + geom_point(color = "blue", shape = 1) + geom_smooth(method = "lm", color = "red") + ggtitle("Log-mean expression of nuclei and cells in AD") + ylab("AD cells") + xlab("AD nuclei")
+ggplot(df, aes(x = df$AD.nuclei, y = df$AD.cells)) + geom_point(color = "blue", shape = 1) + geom_abline(color = "red") + ggtitle("Log-mean expression of nuclei and cells in APP") + ylab("APP cells") + xlab("APP nuclei") + xlim(0, 3) + ylim(0, 3)
+
+ggplot(df, aes(x = df$AD.nuclei, y = df$AD.cells)) + geom_point(color = "blue", shape = 1) + geom_smooth(method = "lm", color = "red") + ggtitle("Log-mean expression of nuclei and cells in APP") + ylab("APP cells") + xlab("APP nuclei") + xlim(0, 3) + ylim(0, 3)
+
+ggplot(df, aes(x = df$AD.nuclei, y = df$AD.cells)) + geom_point(color = "blue", shape = 1) + geom_smooth(method = "lm", color = "red") + ggtitle("Log-mean expression of nuclei and cells in APP") + ylab("APP cells") + xlab("APP nuclei")
 
 # Plot the nuclei vs cells in WT
+ggplot(df, aes(x = df$WT.nuclei, y = df$WT.cells)) + geom_point(color = "blue", shape = 1) + geom_abline(color = "red") + ggtitle("Log-mean expression of nuclei and cells in WT") + ylab("WT cells") + xlab("WT nuclei") + xlim(0, 6) + ylim(0, 6)
+
+ggplot(df, aes(x = df$WT.nuclei, y = df$WT.cells)) + geom_point(color = "blue", shape = 1) + geom_smooth(method = "lm", color = "red") + ggtitle("Log-mean expression of nuclei and cells in WT") + ylab("WT cells") + xlab("WT nuclei") + xlim(0, 6) + ylim(0, 6)
+
 ggplot(df, aes(x = df$WT.nuclei, y = df$WT.cells)) + geom_point(color = "blue", shape = 1) + geom_smooth(method = "lm", color = "red") + ggtitle("Log-mean expression of nuclei and cells in WT") + ylab("WT cells") + xlab("WT nuclei")
+

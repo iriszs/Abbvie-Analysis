@@ -59,13 +59,11 @@ cells_assignment <- AUCell_exploreThresholds(cells_AUC, plotHist=FALSE, assign=T
 # Explore thresholds  
 cells_assignment$Microglia_lavin$aucThr$thresholds
 
-
 # Select cells based on the chosen threshold. These are microlgia
 selectedCells <- names(which(getAUC(cells_AUC)["Microglia_lavin",]>0.02824006))
 
 # calculate how many cells are not assigned as microglia
 length(colnames(sceset)) - length(selectedCells)
-
 
 
 

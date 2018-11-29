@@ -83,6 +83,8 @@ seuset <- ProjectPCA(object = seuset, do.print = FALSE)
 # Create heatmap with the first two princripal components and use the first 500 cells
 PCHeatmap(object = seuset, pc.use = 1:2, cells.use = 500, do.balanced = TRUE, label.columns = FALSE)
 
+PCHeatmap(object = seuset, pc.use = 5:6, cells.use = 500, do.balanced = TRUE, label.columns = FALSE)
+
 # Create a PCElbow plot to identify which dimensions matter
 png(filename="/media/imgorter/BD_1T/Iris/Results/tsne/PCelbow.png")
 PCElbowPlot(object = seuset)
@@ -101,6 +103,8 @@ seuset <- FindClusters(object = seuset, reduction.type = "pca", dims.use = 1:10,
 # Use the first 10 dimensions
 seuset <- RunTSNE(object = seuset, dims.use = 1:10, do.fast = TRUE, check_duplicates = FALSE)
 
+seuset <- readRDS("/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/Seurat_clustered.rds")
+
 # Plot tsne plot by mouse
 png(filename="/media/imgorter/BD_1T/Iris/Results/tsne/tsne_mouse.png")
 TSNEPlot(object = seuset, group.by = "orig.ident")
@@ -118,8 +122,24 @@ colnames(cluster.info) <- c("Cluster", "Mouse", "Cells")
 # Barplot that indicates which mice is assigned to which cluster
 ggplot(cluster.info, aes(x = Mouse, y = Cells, fill = Cluster)) + geom_bar(stat="identity")
 
-# Save Seurat object with the clustering information
-saveRDS(seuset, file = "/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/Seurat_clustered.rds")
+# Calculate percentage of each cluster out of the total number of cells for each mouse
+AD1 <- cluster.info[grep("AD1", cluster.info$Mouse), ]
+AD1[, "Percentage"] <- AD1[,3] / sum(AD1[,3]) * 100
+
+AD2 <- cluster.info[grep("AD2", cluster.info$Mouse), ]
+AD2[, "Percentage"] <- AD2[,3] / sum(AD2[,3]) * 100
+
+WT1 <- cluster.info[grep("WT1", cluster.info$Mouse), ]
+WT1[, "Percentage"] <- WT1[,3] / sum(WT1[,3]) * 100
+
+WT2 <- cluster.info[grep("WT2", cluster.info$Mouse), ]
+WT2[, "Percentage"] <- WT2[,3] / sum(WT2[,3]) * 100
+
+# Plot relative barplot
+cluster.info <- rbind(AD1, AD2, WT1, WT2)
+
+ggplot(cluster.info, aes(x = Mouse, y = Percentage, fill = Cluster)) + geom_bar(stat = "identity")
+
 
 pdf("/media/imgorter/BD_1T/Iris/Results/tsne/genes.pdf")
 
@@ -137,4 +157,5 @@ FeaturePlot(object = seuset, features.plot = c("Trem2", "P2ry12"), cols.use = c(
 
 dev.off()
 
-
+# Save Seurat object with the clustering information
+saveRDS(seuset, file = "/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/Seurat_clustered.rds")
