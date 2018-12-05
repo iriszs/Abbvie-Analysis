@@ -37,7 +37,10 @@ samples <- c("WT1-cells", "WT1-nuclei", "WT2-cells", "WT2-nuclei", "APP1-cells",
 
 # Source of loading in data: https://ucdavis-bioinformatics-training.github.io/2017_2018-single-cell-RNA-sequencing-Workshop-UCD_UCB_UCSF/day2/scRNA_Workshop-PART1.html
 data <- sapply(samples, function(i){
+  # Use the Read10X function to read in the 3 output files from CellRanger
   d10x <- Read10X(file.path(dataset_loc, i, "outs/filtered_gene_bc_matrices/mm10/"))
+  # Add the samplename to the cellbarcodes
+  colnames(d10x) <- paste0(colnames(d10x), "-", i)
   d10x
 })
 
@@ -51,12 +54,19 @@ seuset <- CreateSeuratObject(
   names.field = 2,
   names.delim = "\\-")
 
-
 # Read in metadata
 meta.data <- read.csv("/media/imgorter/BD_1T/Iris/Data_abbvie/reference_AD_WT.csv", header = TRUE)
 
+# Remove the -1 from the cellbarcodes
 meta.data$Barcode <- unlist(strsplit(meta.data$Barcode, split="-1"))
 
+# Add mouse and celltype to the cellbarcodes to match the cellbarcodes in the seurat object
+meta.data$Barcode <- paste0(meta.data$Barcode, "-", meta.data$Mouse, "-", meta.data$Type)
+
+# Check if there are any duplicates
+which(duplicated(meta.data$Barcode))
+
+# Add meta data to the seurat object
 seuset <- AddMetaData(seuset, metadata = meta.data)
 
 # Save Seurat object
