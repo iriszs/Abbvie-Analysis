@@ -39,7 +39,7 @@ samples <- c("WT1-cells", "WT1-nuclei", "WT2-cells", "WT2-nuclei", "APP1-cells",
 data <- sapply(samples, function(i){
   # Use the Read10X function to read in the 3 output files from CellRanger
   d10x <- Read10X(file.path(dataset_loc, i, "outs/filtered_gene_bc_matrices/mm10/"))
-  # Add the samplename to the cellbarcodes
+  # Add the samplename to the barcode (colnames)
   colnames(d10x) <- paste0(colnames(d10x), "-", i)
   d10x
 })
@@ -47,27 +47,22 @@ data <- sapply(samples, function(i){
 # Combine the datasets together
 seuset.data <- do.call("cbind", data)
 
+# Read in metadata
+meta.data <- read.csv("/media/imgorter/BD_1T/Iris/Data_abbvie/reference_AD_WT.csv", header = TRUE)
+
+# remove the -1 from the barcode list
+meta.data$Barcode <- unlist(strsplit(meta.data$Barcode, split="-1"))
+
+# Add mouse and celltype to the barcode to make it identical to the colnames of the data to match
+meta.data$Barcode <- paste0(meta.data$Barcode, "-", gsub("-", "", meta.data$Mouse),  "-", tolower(meta.data$Type))
+
 # Create Seurat object
 seuset <- CreateSeuratObject(
   seuset.data,
   project = "Abbvie",
   names.field = 2,
-  names.delim = "\\-")
-
-# Read in metadata
-meta.data <- read.csv("/media/imgorter/BD_1T/Iris/Data_abbvie/reference_AD_WT.csv", header = TRUE)
-
-# Remove the -1 from the cellbarcodes
-meta.data$Barcode <- unlist(strsplit(meta.data$Barcode, split="-1"))
-
-# Add mouse and celltype to the cellbarcodes to match the cellbarcodes in the seurat object
-meta.data$Barcode <- paste0(meta.data$Barcode, "-", meta.data$Mouse, "-", meta.data$Type)
-
-# Check if there are any duplicates
-which(duplicated(meta.data$Barcode))
-
-# Add meta data to the seurat object
-seuset <- AddMetaData(seuset, metadata = meta.data)
+  names.delim = "\\-",
+  meta.data = meta.data)
 
 # Save Seurat object
 saveRDS(seuset, file = "/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/Seurat.rds")
