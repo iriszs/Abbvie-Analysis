@@ -59,7 +59,7 @@ gc()
 # Plot the top 50 genes that are highly expressed
 plotHighestExprs(WT)
 
-# Put tje top 50 genes in a vector (genes of interest)
+# Put the top 50 genes in a vector (genes of interest)
 goi <- c("Malat1", "Cst3", "Apoe", "Ctsd", "Hexb", "C1qa", "Ctss", "C1qb", "C1qc", "Tmsb4x", "Itm2b", "Lgmn", "Ctsb", "B2m", "Trem2", "Cd81", "Tyrobp", "Ctsz", "Cd9", "Rps29", "Fth1", "Ft1", "mt.Co3", "Ctsl", "mt.Atp6", "Psap", "Foer1g", "Selplg", "H2.D1", "Lyz2", "Rpl41", "Foris", "Cd68", "Csf1r", "Serpine2", "Ly86", "Cst7", "Laptm5", "Grn", "Rps27", "P2ry12", "Rpl18a", "Cd63", "Actb", "Sparc", "Rpl37a", "Hexa", "Cd74", "mt.Co1", "Olfml3")
 
 # Create a logical which genes to use 
