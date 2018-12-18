@@ -27,7 +27,7 @@ set.seed(1234567)
 bioPkgTest("Seurat")
 
 ########################################################
-#                 Setup Seurat Object                  #
+#                    DAM analysis                      #
 ########################################################
 
 # location of dataset
