@@ -73,31 +73,25 @@ DAM_analyse <- function(samples, type){
   # Regress the data on number of detected molecules per cell and the mitochondrial gene content percentage
   seuset <- ScaleData(object = seuset, vars.to.regress = c("nUMI", "percent.mito"))
   
-  #Sys.sleep(180)
-  
   ########################################################
   #        Perform linear dimensional reduction          #
   ########################################################
   
-  pdf(paste0("/media/imgorter/BD_1T/Iris/Results/DAM_analysis/workflow//", type, ".pdf"))
-  
   # Run Princincipal component analysis on all genes
   seuset <- RunPCA(object = seuset, pc.genes = rownames(seuset@data), do.print = FALSE)
   
-  # Visualize the genes associated with first two principal components
-  VizPCA(object = seuset, pcs.use = 1:2)
-  
   # Create PCA plot with the first two principal components
+  png(paste0("/media/imgorter/BD_1T/Iris/Results/DAM_analysis/", type, "/pca.png"))
   PCAPlot(object = seuset, dim.1 = 1, dim.2 = 2)
+  dev.off()
   
   # runs the pre-computed PCA to the entire dataset
   seuset <- ProjectPCA(object = seuset, do.print = FALSE)
-  
-  # Create heatmap with the first two princripal components and use the first 500 cells
-  PCHeatmap(object = seuset, pc.use = 1:2, cells.use = 500, do.balanced = TRUE, label.columns = FALSE)
-  
+
   # Create a PCElbow plot to identify which dimensions matter
+  png(paste0("/media/imgorter/BD_1T/Iris/Results/DAM_analysis/", type, "/elbow.png"))
   PCElbowPlot(object = seuset)
+  dev.off()
   
   ########################################################
   #                    Clustering                        #
@@ -113,42 +107,50 @@ DAM_analyse <- function(samples, type){
   seuset <- RunTSNE(object = seuset, dims.use = 1:15, do.fast = TRUE, check_duplicates = FALSE)
   
   # Cluster based tsne plot
+  png(paste0("/media/imgorter/BD_1T/Iris/Results/DAM_analysis/", type, "/tsne.png"))
   TSNEPlot(object = seuset)
+  dev.off()
   
   # Genes that are suppressed in neurodegenerative diseases (Butovsky et al.)
   suppressed <- c("P2ry12", "Ccr5", "Cd33", "Csf1r", "Cx3cr1", "Glul",  "Gpr34", "Adgrg1", "Tgfb1", "Tgfbr1", "Serinc3", "Siglech", "Mertk", "Bin1", "Tmem119", "Pu.1", "Sall1", "Mafb", "Smad3", "Mef2a", "Egr1", "Jun")
   
   # Create heatmap of the suppressed genes
   hm1 <- DoHeatmap(seuset, genes.use = suppressed, slim.col.label = TRUE, group.spacing = 0.5, col.low = "Red", col.mid = "Black", col.high = "Green", title = paste0("Heatmap of APP microglia ", type, " with suppressed genes"))
+  png(paste0("/media/imgorter/BD_1T/Iris/Results/DAM_analysis/", type, "/suppressed.png"))
   print(hm1)
+  dev.off()
   
   # Genes that are induced in neurodegenerative diseases (Butovsky et al.)
   induced <- c("Apoe", "Axl", "Bhlhe40", "Clec7a", "Csf1", "Cst7", "Ctsb", "Ctsd", "Ctsl", "Cybb", "Fabp5", "Fth1", "Itgax", "Gnas", "Gpnmb", "Grn", "Il1b", "Lgals3", "Lilrb4", "Lpl", "Lyz2", "Mir155", "Msr1", "Nos2", "Spp1", "Tfec", "Trem2", "Tyrobp", "Vegfa")
   
   # Create heatmap of induced genes
   hm2 <- DoHeatmap(seuset, genes.use = induced, slim.col.label = TRUE, group.spacing = 0.5, col.low = "Red", col.mid = "Black", col.high = "Green", title = paste0("Heatmap of APP microglia ", type,  " with induced genes"))
+  png(paste0("/media/imgorter/BD_1T/Iris/Results/DAM_analysis/", type, "/induced.png"))
   print(hm2)
+  dev.off()
   
   # Homeostatic microglia genes (Keren-Shaul et al.)
   homeostatic <- c("Hexb", "Cst3", "Cx3cr1", "Ctsd", "Csf1r", "Ctss", "Sparc", "Tmsb4x", "P2ry12", "C1qa", "C1qb")
   
   # Create heatmap of homeostatic microglia genes
   hm3 <- DoHeatmap(seuset, genes.use = homeostatic, slim.col.label = TRUE, group.spacing = 0.5, col.low = "Red", col.mid = "Black", col.high = "Green", title = paste0("Heatmap of APP microglia ", type, " of homeostatic mg genes"))
+  png(paste0("/media/imgorter/BD_1T/Iris/Results/DAM_analysis/", type, "/homeostatic.png"))
   print(hm3)
+  dev.off()
   
   # Genes that are involved (higher expression) in stage 2 Disease Associated Microglia (DAM) (Keren-Shaul)
   stage2 <- c("Trem2", "Axl", "Cts7", "Ctsl", "Lpl", "Cd9", "Csf1", "Ccl6", "Itgax", "Clec7", "Lilrb4", "Timp2")
   
   # Create heatmap of the stage 2 DAM genes
   hm4 <- DoHeatmap(seuset, genes.use = stage2, slim.col.label = TRUE, group.spacing = 0.5, col.low = "Red", col.mid = "Black", col.high = "Green", title = paste0("Heatmap of APP microglia ", type, " with stage 2 DAM genes"))
+  png(paste0("/media/imgorter/BD_1T/Iris/Results/DAM_analysis/", type, "/stage2.png"))
   print(hm4)
+  dev.off()
   
   # Find variable genes between clusters
   markers <- FindAllMarkers(seuset)
   
   saveRDS(seuset, file = paste0("/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/", type, "_DAM.rds" ))
-  
-  dev.off()
   
 }
 
