@@ -32,9 +32,49 @@ bioPkgTest("scater")
 pkgTest("xlsx")
 
 ########################################################
+#                      Functions                       #
+########################################################
+
+GO <- function(counts){
+  # Calculate the 25th percentile 
+  percentile <- counts[rowSums(counts >0) > quantile(rowSums(counts) , probs=0.75),]
+  
+  # Get the rownames (which are the gene symbols) of the 25th percentile
+  symbol <- rownames(percentile)
+  
+  # Put those genes in a dataframe
+  genes.df <- as.data.frame(symbol)
+  
+  # Convert the gene symbols to entrez id's and add to the genes dataframe
+  genes.df[,"entrez"] <- mapIds(org.Mm.eg.db, keys = genes.df$symbol, column="ENTREZID", keytype = "SYMBOL", multiVals="first")
+  
+  # Molecular function
+  GOEA <- enrichGO(as.character(genes.df$entrez), OrgDb="org.Mm.eg.db", ont = "MF")
+  
+  # Plot the results in a dotplot
+  print(dotplot(GOEA, title = "GOEA of Molecular Function"))
+  
+  # Biological Process
+  GOEA <- enrichGO(as.character(genes.df$entrez), OrgDb="org.Mm.eg.db", ont = "BP")
+  
+  # Plot the results in a dotplot
+  print(dotplot(GOEA, title = "GOEA of Biological Processes"))
+  
+  # Cellular Component
+  GOEA <- enrichGO(as.character(genes.df$entrez), OrgDb="org.Mm.eg.db", ont = "CC")
+  
+  # Plot the results in a dotplot
+  print(dotplot(GOEA, title = "GOEA of Cellular Component"))
+}
+
+########################################################
 #                     GO Analysis                      #
 ########################################################
 
+
+########################################################
+#                      All Genes                       #
+########################################################
 # Load RDS
 seuset <- readRDS("/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/cells_DAM.rds")
 
@@ -49,23 +89,8 @@ tpm.values <- x_rpkm/rpkmsum * 10^6
 # Set the RPKM values as the data assay
 damSet@data <- tpm.values
 
-# Calculate the 25th percentile 
-percentile <- damSet@data[rowSums(damSet@data >0) > quantile(rowSums(damSet@data) , probs=0.75),]
-
-# Get the rownames (which are the gene symbols) of the 25th percentile
-symbol <- rownames(percentile)
-
-# Put those genes in a dataframe
-genes.df <- as.data.frame(symbol)
-
-# Convert the gene symbols to entrez id's and add to the genes dataframe
-genes.df[,"entrez"] <- mapIds(org.Mm.eg.db, keys = genes.df$symbol, column="ENTREZID", keytype = "SYMBOL", multiVals="first")
-
-# perform GO Enrichment Analysis of the entrez gene set with the mouse database
-GOEA <- enrichGO(as.character(genes.df$entrez), OrgDb="org.Mm.eg.db")
-
-# Plot the results in a dotplot
-dotplot(GOEA)
+# Call GO function as defined above
+GO(damSet@data)
 
 # Calculate the mean expression of each gene
 mean <- rowMeans(damSet@data)
@@ -76,7 +101,9 @@ mean <- mean[order(-mean$mean), , drop = FALSE]
 # Write the 3000 genes that have the average highest expression to an xlsx file to use in Metascape
 write.xlsx(rownames(mean)[0:3000], file = "/media/imgorter/BD_1T/Iris/Results/DAM_analysis/GO_analysis/first_3000.xlsx", row.names = FALSE, col.names = FALSE)
 
-###################################################################################################################
+########################################################
+#            Without ribo and mito genes               #
+########################################################
 
 # Convert the RPKM values and genes to a single cell experiment object
 # Since it is not possible to remove genes from a Seurat object
@@ -97,23 +124,8 @@ sceset <- sceset[is.ribo==FALSE, ]
 # Calculate how many genes are removed
 length(which(is.mito)) + length(which(is.ribo))
 
-# Calculate the 25th percentile again, now with 122 genes less
-percentile <- assay(sceset, "counts")[rowSums(assay(sceset, "counts")) > quantile(rowSums(assay(sceset, "counts")) , probs=0.75),]
-
-# Get the rownames (which are the gene symbols) of the 25th percentile
-symbol <- rownames(percentile)
-
-# Put the genes in a dataframe
-genes.df <- as.data.frame(symbol)
-
-# Convert the gene symbols to entrez id's
-genes.df[,"entrez"] <- mapIds(org.Mm.eg.db, keys = genes.df$symbol, column="ENTREZID", keytype = "SYMBOL", multiVals="first")
-
-# perform GO Enrichment Analysis of the entrez gene set with the mouse database
-GOEA <- enrichGO(as.character(genes.df$entrez), OrgDb="org.Mm.eg.db")
-
-# Plot the results in a dotplot
-dotplot(GOEA)
+# Call GO function as defined above
+GO(assay(sceset, "counts"))
 
 # Calculate the mean expression of each gene
 mean <- rowMeans(assay(sceset, "counts"))
@@ -123,3 +135,4 @@ mean <- mean[order(-mean$mean), , drop = FALSE]
 
 # Write the 3000 genes that have the average highest expression to an xlsx file to use in Metascape
 write.xlsx(rownames(mean)[0:3000], file = "/media/imgorter/BD_1T/Iris/Results/DAM_analysis/GO_analysis/first_3000_without_ribo_mito.xlsx", row.names = FALSE, col.names = FALSE)
+
