@@ -103,6 +103,7 @@ seuset <- FindClusters(object = seuset, reduction.type = "pca", dims.use = 1:10,
 # Use the first 10 dimensions
 seuset <- RunTSNE(object = seuset, dims.use = 1:10, do.fast = TRUE, check_duplicates = FALSE)
 
+# RDS object in case there needs to be a change in the visualization
 seuset <- readRDS("/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/Seurat_clustered.rds")
 
 # Plot tsne plot by mouse

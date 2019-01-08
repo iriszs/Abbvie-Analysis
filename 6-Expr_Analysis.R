@@ -27,6 +27,7 @@ set.seed(1234567)
 bioPkgTest("SingleCellExperiment")
 bioPkgTest("scater")
 bioPkgTest("ggplot2")
+bioPkgTest("plotly")
 
 
 ########################################################
@@ -40,75 +41,48 @@ sceset <- readRDS("/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE.rds")
 keep_feature <- rowSums(counts(sceset) > 0) > 0
 sceset <- sceset[keep_feature, ]
 
-
-# Put AD and WT in different datasets
-AD <- filter(sceset, Condition == "AD")
-WT <- filter(sceset, Condition == "WT")
+# Put APP and WT in different datasets
+APP <- scater::filter(sceset, Condition == "APP")
+WT <- scater::filter(sceset, Condition == "WT")
 
 # Remove the single cell experiment object
 rm("sceset")
 gc()
 
-# Create a dataframe for each cell type and condition 
-AD.nuclei <- filter(AD, Type == "Nuclei")
-AD.cells <- filter(AD, Type == "Microglia")
+# Create a sceset for each cell type and condition 
+APP.nuclei <- scater::filter(APP, Type == "Nuclei")
+APP.cells <- scater::filter(APP, Type == "Cells")
 
-WT.nuclei <- filter(WT, Type == "Nuclei")
-WT.cells <- filter(WT, Type == "Microglia")
+WT.nuclei <- scater::filter(WT, Type == "Nuclei")
+WT.cells <- scater::filter(WT, Type == "Cells")
 
-# Calculate the mean of the expression of each gene 
-AD.nuclei_mean <- rowMeans(assay(AD.nuclei))
-# Convert the set to a dataframe
-AD.nuclei_mean <- as.data.frame(AD.nuclei_mean)
-# Log-normalize the mean
-AD.nuclei_mean <- log2(AD.nuclei_mean + 1)
-# Set the columnames of the dataframe
-colnames(AD.nuclei_mean) <- "AD.nuclei"
+# Put all scesets in a list
+types <- list(APP.nuclei, APP.cells, WT.nuclei, WT.cells)
 
-# Calculate the mean of the expression of each gene 
-AD.cells_mean <- rowMeans(assay(AD.cells))
-# Convert the set to a dataframe
-AD.cells_mean <- as.data.frame(AD.cells_mean)
-# Log-normalize the mean
-AD.cells_mean <- log2(AD.cells_mean + 1)
-# Set the columnames of the dataframe
-colnames(AD.cells_mean) <- "AD.cells"
+# Create a matrix with the size of the four scesets and the number of genes that is left
+df <- data.frame(matrix(ncol = 4, nrow = 14245))
 
-# Calculate the mean of the expression of each gene
-WT.nuclei_mean <- rowMeans(assay(WT.nuclei))
-# Convert the set to a dataframe
-WT.nuclei_mean <- as.data.frame(WT.nuclei_mean)
-# Log-normalize the mean
-WT.nuclei_mean <- log2(WT.nuclei_mean + 1)
-# Set the columnames of the dataframe
-colnames(WT.nuclei_mean) <- "WT.nuclei"
+# For each sceset
+for (i in 1:4){
+  # Calculate the rowmeans of the counts
+  mean <- rowMeans(assay(types[[i]], "counts"))
+  # Set as dataframe
+  mean <- as.data.frame(mean)
+  # Log-normalize
+  mean <- log2(mean +1)
+  # Add to the previously made dataframe
+  df[i] <- mean
+}
 
-# Calculate the mean of the expression of each gene
-WT.cells_mean <- rowMeans(assay(WT.cells))
-# Convert the set to a dataframe
-WT.cells_mean <- as.data.frame(WT.cells_mean)
-# Log-normalize the mean
-WT.cells_mean <- log2(WT.cells_mean + 1)
-# Set the columnames of the dataframe
-colnames(WT.cells_mean) <- "WT.cells"
+# Set colnames of dataframe
+colnames(df) <- c("APP.nuclei", "APP.cells", "WT.nuclei", "WT.cells")
 
-# Combine the normalized mean for each condition and celltype together
-df <- cbind(AD.nuclei_mean, AD.cells_mean, WT.nuclei_mean, WT.cells_mean)
-
-# Check if all columns are numeric
-sapply(df, class)
+# Set the rownames of the last made mean as gene in the dataframe to make plot interactive
+df$gene <- rownames(mean)
 
 # Plot the nuclei vs cells in AD
-ggplot(df, aes(x = df$AD.nuclei, y = df$AD.cells)) + geom_point(color = "blue", shape = 1) + geom_abline(color = "red") + ggtitle("Log-mean expression of nuclei and cells in APP") + ylab("APP cells") + xlab("APP nuclei") + xlim(0, 3) + ylim(0, 3)
-
-ggplot(df, aes(x = df$AD.nuclei, y = df$AD.cells)) + geom_point(color = "blue", shape = 1) + geom_smooth(method = "lm", color = "red") + ggtitle("Log-mean expression of nuclei and cells in APP") + ylab("APP cells") + xlab("APP nuclei") + xlim(0, 3) + ylim(0, 3)
-
-ggplot(df, aes(x = df$AD.nuclei, y = df$AD.cells)) + geom_point(color = "blue", shape = 1) + geom_smooth(method = "lm", color = "red") + ggtitle("Log-mean expression of nuclei and cells in APP") + ylab("APP cells") + xlab("APP nuclei")
+ggplotly(ggplot(df, aes(x = df$APP.nuclei, y = df$APP.cells, label = df$gene)) + geom_point(color = "blue", shape = 1) + geom_abline(color = "red") + ggtitle("Log-mean expression of nuclei and cells in APP") + ylab("APP cells") + xlab("APP nuclei") + xlim(0, 3) + ylim(0, 3))
 
 # Plot the nuclei vs cells in WT
-ggplot(df, aes(x = df$WT.nuclei, y = df$WT.cells)) + geom_point(color = "blue", shape = 1) + geom_abline(color = "red") + ggtitle("Log-mean expression of nuclei and cells in WT") + ylab("WT cells") + xlab("WT nuclei") + xlim(0, 6) + ylim(0, 6)
-
-ggplot(df, aes(x = df$WT.nuclei, y = df$WT.cells)) + geom_point(color = "blue", shape = 1) + geom_smooth(method = "lm", color = "red") + ggtitle("Log-mean expression of nuclei and cells in WT") + ylab("WT cells") + xlab("WT nuclei") + xlim(0, 6) + ylim(0, 6)
-
-ggplot(df, aes(x = df$WT.nuclei, y = df$WT.cells)) + geom_point(color = "blue", shape = 1) + geom_smooth(method = "lm", color = "red") + ggtitle("Log-mean expression of nuclei and cells in WT") + ylab("WT cells") + xlab("WT nuclei")
+ggplotly(ggplot(df, aes(x = df$WT.nuclei, y = df$WT.cells, label = df$gene)) + geom_point(color = "blue", shape = 1) + geom_abline(color = "red") + ggtitle("Log-mean expression of nuclei and cells in WT") + ylab("WT cells") + xlab("WT nuclei") + xlim(0, 6) + ylim(0, 6))
 
