@@ -38,8 +38,7 @@ bioPkgTest("doRNG")
 sceset <- readRDS("/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE.rds")
 
 # Location of the gene matrix file
-gmtFile <- "/media/imgorter/BD_1T/Iris/microglia_signatures.gmt"
-#gmtFile <- paste(file.path(system.file('examples', package='AUCell')), "geneSignatures.gmt", sep="/")
+gmtFile <- "/media/imgorter/BD_1T/Iris/Scripts/microglia_signatures.gmt"
 # Load the gene matrix
 geneSets <- getGmt(gmtFile)
 
@@ -59,11 +58,12 @@ cells_assignment <- AUCell_exploreThresholds(cells_AUC, plotHist=FALSE, assign=T
 # Explore thresholds  
 cells_assignment$Microglia_lavin$aucThr$thresholds
 
-# Select cells based on the chosen threshold. These are microlgia
+# Cellbarcodes based on the chosen threshold. These are microglia.
 selectedCells <- names(which(getAUC(cells_AUC)["Microglia_lavin",]>0.02824006))
 
 # calculate how many cells are not assigned as microglia
 length(colnames(sceset)) - length(selectedCells)
+
 
 
 
