@@ -25,8 +25,11 @@ set.seed(1234567)
 # Load only the necessary packages for this script
 # With the use of the pkgTest and bioPkgTest functions from the packageTest.r file
 bioPkgTest("SingleCellExperiment")
+bioPkgTest("clusterProfiler")
+bioPkgTest("org.Mm.eg.db")
 bioPkgTest("scater")
-bioPkgTest("GeneOverlap")
+pkgTest("VennDiagram")
+pkgTest("gplots")
 
 ########################################################
 #                   Gene Overlap                       #
@@ -98,3 +101,45 @@ AD.cells.NO <- length(rownames(AD.cells)) - length(overlapAD)
 
 # Calculate the number of genes that are unique in the AD nuclei
 AD.nuclei.NO <- length(rownames(AD.nuclei)) - length(overlapAD)
+
+####################################
+# 25th percentile genes overlap    #
+####################################
+
+
+# Calculate the 25th percentile for AD nuclei
+AD.nuclei.percentile <- assay(AD.nuclei, "RPKM")[rowSums(assay(AD.nuclei, "RPKM") >0) > quantile(rowSums(assay(AD.nuclei, "RPKM")) , probs=0.75),]
+
+# Calculate the 25th percentile for AD cells
+AD.cells.percentile <- assay(AD.cells, "RPKM")[rowSums(assay(AD.cells, "RPKM") >0) > quantile(rowSums(assay(AD.cells, "RPKM")) , probs=0.75),]
+
+# Calculate the 25th percentile for WT nuclei
+WT.nuclei.percentile <- assay(WT.nuclei, "RPKM")[rowSums(assay(WT.nuclei, "RPKM") >0) > quantile(rowSums(assay(WT.nuclei, "RPKM")) , probs=0.75),]
+
+# Calculate the 25th percentile for WT cells
+WT.cells.percentile <- assay(WT.cells, "RPKM")[rowSums(assay(WT.cells, "RPKM") >0) > quantile(rowSums(assay(WT.cells, "RPKM")) , probs=0.75),]
+
+# Put all genenames from the percentiles in a list
+geneList <- list(rownames(AD.nuclei.percentile), rownames(AD.cells.percentile), rownames(WT.nuclei.percentile), rownames(WT.cells.percentile))
+
+# Rename the vectors
+names(geneList) <- c("AD.nuclei", "AD.cells", "WT.nuclei", "WT.cells")
+
+# Create a venn diagram with the genenames of each group
+venn.plot <- venn.diagram(geneList , NULL, cex = 2, category.names=c("AD.nuclei", "AD.cells", "WT.nuclei", "WT.cells"), main="Overlap of the 25th percentile genes in each group", main.cex = 1.5)
+
+# Plot the venn diagram
+grid.draw(venn.plot)
+
+# Get the list of genes present in each Venn compartment with the use of the gplot package
+genes <- venn(geneList, show.plot=FALSE)
+
+# unique genes of each cell type and condition
+WT.nuclei.df <- sceset[rownames(sceset) %in% inters$WT.nuclei, ]
+
+WT.cells.df <- sceset[rownames(sceset) %in% inters$WT.cells, ]
+
+AD.nuclei.df <- sceset[rownames(sceset) %in% inters$AD.nuclei, ]
+
+AD.cells.df <- sceset[rownames(sceset) %in% inters$AD.cells, ]
+
