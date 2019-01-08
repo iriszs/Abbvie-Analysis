@@ -53,11 +53,3 @@ sceset <- SingleCellExperiment(assays = list(counts = as.matrix(molecules)), col
 
 # Save object to import in another script
 saveRDS(sceset, file = "/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE.rds")
-
-# overwrite the rownames to the ensembl molecules (first column)
-rownames(molecules) <- make.names(genenames[,1], unique = TRUE)
-
-sceset <- SingleCellExperiment(assays = list(counts = as.matrix(molecules)), colData = anno)
-
-# Save as a different object
-saveRDS(sceset, file = "/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE_ensembl.rds")
