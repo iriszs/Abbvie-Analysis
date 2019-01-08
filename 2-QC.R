@@ -48,7 +48,7 @@ sceset <- calculateQCMetrics(sceset)
 hist(sceset$total_counts, breaks = 100, main = "Library Size", xlab = "Counts")
 
 # Create histogram of the unique genes distribution across cells
-hist(sceset$total_features_by_counts , breaks = 100, main = "Amount of unique genes detected per cell", xlab = "Amount of genes")
+hist(sceset$total_features_by_counts , breaks = 100, main = "Unique genes detected per cell", xlab = "Number of genes")
 
 plotColData(sceset, x = "total_features_by_counts", y = "pct_counts_MT", colour_by = "Type") + ggtitle("Percentage of counts in MT genes")
 
