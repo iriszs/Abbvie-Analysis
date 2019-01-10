@@ -69,10 +69,10 @@ genes <- rownames(WT) %in% goi
 WT <- WT[genes, ]
 
 # Filter cells and nuclei in different scesets
-cells <- filter(WT, Type == "Microglia")
+cells <- filter(WT, Type == "Cells")
 
 nuclei <- filter(WT, Type == "Nuclei")
 
 # Create a heatmap of the top50 genes for nuclei and cells to compare
-Heatmap(assay(cells, "RPKM"), show_column_names = FALSE) + Heatmap(assay(nuclei, "RPKM"), show_column_names = FALSE)
+Heatmap(assay(cells, "RPKM"), show_column_names = FALSE, name = "Cells", column_title = "Cells") + Heatmap(assay(nuclei, "RPKM"), show_column_names = FALSE, name = "Nuclei", column_title =  "Nuclei")
 

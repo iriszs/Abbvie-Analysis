@@ -46,6 +46,8 @@ rpkmsum <- sum(x_rpkm, na.rm=F)
 tpm.values <- x_rpkm/rpkmsum * 10^6
 assay(sceset, "RPKM") <- tpm.values
 
+saveRDS(sceset, "/media/imgorter/BD_1T/Iris/Scripts/abbvie/RDS/SCE_rpkm.rds")
+
 # Put AD and WT in different datasets
 APP <- filter(sceset, Condition == "APP")
 WT <- filter(sceset, Condition == "WT")
