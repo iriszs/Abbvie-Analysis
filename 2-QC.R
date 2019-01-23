@@ -50,6 +50,8 @@ hist(sceset$total_counts, breaks = 100, main = "Library Size", xlab = "Counts")
 # Create histogram of the unique genes distribution across cells
 hist(sceset$total_features_by_counts , breaks = 100, main = "Unique genes detected per cell", xlab = "Number of genes")
 
+median(sceset$total_features_by_counts)
+
 plotColData(sceset, x = "total_features_by_counts", y = "pct_counts_MT", colour_by = "Type") + ggtitle("Percentage of counts in MT genes")
 
 # Filters based on RNA molecules and unique genes
