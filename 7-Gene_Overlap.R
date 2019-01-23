@@ -140,12 +140,23 @@ grid.draw(venn.plot)
 # Get the list of genes present in each Venn compartment with the use of the gplot package
 genes <- venn(geneList, show.plot=FALSE)
 
-# unique genes of each cell type and condition
+# Get the intersections
+inters <- attr(genes, "intersections")
+
+# Unique genes of each cell type and condition
 WT.nuclei.df <- sceset[rownames(sceset) %in% inters$WT.nuclei, ]
+
+# Get the gene names of the unique genes
+rownames(WT.nuclei.df)
 
 WT.cells.df <- sceset[rownames(sceset) %in% inters$WT.cells, ]
 
+rownames(WT.cells.df)
+
 AD.nuclei.df <- sceset[rownames(sceset) %in% inters$AD.nuclei, ]
+
+rownames(AD.nuclei.df)
 
 AD.cells.df <- sceset[rownames(sceset) %in% inters$AD.cells, ]
 
+rownames(AD.cells.df)
